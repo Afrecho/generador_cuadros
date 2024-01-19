@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="estilo.css">
+    <title>Document</title>
+</head>
+<body>
+
+    <div id="container-cuadros">
+        <div id="cuadro1" class="cuadro"></div>
+        <div id="cuadro2" class="cuadro"></div>
+        <div id="cuadro3" class="cuadro"></div>
+        <div id="cuadro4" class="cuadro"></div>
+        <div id="cuadro5" class="cuadro"></div>
+    </div>
+
+    <div id="inputfoto">
+        <input type="file" id="fileInput" accept="image/*" onchange="mostrarFoto()">
+        <button onclick="cargarFoto()">GENERAR CUADROS</button>
+        <div id="muestra"></div>
+    </div>
+
+    <script>
+        function mostrarFoto() {
+            var fileInput = document.getElementById('fileInput');
+            var muestra = document.getElementById('muestra');
+
+            var file = fileInput.files[0];
+
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var imageUrl = e.target.result;
+
+                    // Asignar a div muestra con transición suave
+                    muestra.style.transition = "background-image 0.5s ease-in-out";
+                    muestra.style.backgroundImage = "url('" + imageUrl + "')";
+                    muestra.style.filter = "none"; 
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function cargarFoto() {
+            var fileInput = document.getElementById('fileInput');
+            var cuadros = document.getElementsByClassName('cuadro');
+            var muestra = document.getElementById('muestra');
+
+            var file = fileInput.files[0];
+
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var imageUrl = e.target.result;
+
+                    // Asignar a cuadros con transición suave
+                    for (var i = 0; i < cuadros.length; i++) {
+                        cuadros[i].style.transition = "background-image 0.5s ease-in-out";
+                        cuadros[i].style.backgroundImage = "url('" + imageUrl + "')";
+                        cuadros[i].style.filter = getFilter(i);
+                        cuadros[i].style.backgroundSize = "cover"; 
+                    }
+
+                    // Crear un mosaico en el cuadro4
+                    var cuadro4 = cuadros[3];
+                    cuadro4.style.transition = "background-image 0.5s ease-in-out";
+                    cuadro4.style.backgroundImage = "url('" + imageUrl + "')";
+                    cuadro4.style.backgroundSize = "50% 50%";
+                    cuadro4.style.backgroundPosition = "top left";
+
+                    // Aplicar filtros a los cuadros del mosaico
+                    for (var j = 0; j < 4; j++) {
+                        var cuadroMosaico = document.createElement("div");
+                        cuadroMosaico.className = "cuadro-mosaico";
+                        cuadroMosaico.style.width = "50%";
+                        cuadroMosaico.style.height = "50%";
+                        cuadroMosaico.style.float = (j % 2 === 0) ? "left" : "right";
+                        cuadroMosaico.style.backgroundImage = "url('" + imageUrl + "')";
+                        cuadroMosaico.style.backgroundSize = "cover";
+                        cuadroMosaico.style.backgroundPosition = (j < 2) ? "top" : "bottom";
+                        cuadroMosaico.style.filter = getFilter(j + 5); // Usar filtros diferentes para el mosaico
+                        cuadro4.appendChild(cuadroMosaico);
+                    }
+
+                    // Asignar a div muestra con transición suave
+                    muestra.style.transition = "background-image 0.5s ease-in-out";
+                    muestra.style.backgroundImage = "url('" + imageUrl + "')";
+                    muestra.style.filter = "none"; 
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function getFilter(index) {
+            // Filtros
+            switch (index) {
+                case 0:
+                    return "grayscale(100%)"; 
+                case 1:
+                    return "sepia(100%)"; 
+                case 2:
+                    return "saturate(200%)"; 
+                case 3:
+                    return "none"; 
+                case 4:
+                    return "contrast(200%)"; 
+                default:
+                    return "none";
+            }
+        }
+    </script>
+</body>
+</html>
